@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Election</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            width: 50%;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+        label {
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .btn:hover {
+            background-color: #218838;
+        }
+
+        @media (max-width: 800px) {
+            .container {
+                width: 70%;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .container {
+                width: 90%;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Include Header -->
+    <%- include('partials/header') %>
+
+    <div class="container">
+        <h1>Create Election</h1>
+
+        <form action="/create-election" method="POST">
+            <label>Election ID:</label>
+            <input type="text" name="election_id" required>
+            
+            <label>Election Name:</label>
+            <input type="text" name="election_name" required>
+            
+            <label>Election Roles:</label>
+            <input type="text" name="election_roles" required>
+            
+            <label>Responsibilities:</label>
+            <input type="text" name="responsibility" required>
+            
+            <label>All Degree:</label>
+            <input type="text" name="all_degree" required>
+            
+            <label>Degree ID:</label>
+            <input type="text" name="degree_id" required>
+            
+            <label>All Branch:</label>
+            <input type="text" name="all_branch" required>
+            
+            <label>Branch ID:</label>
+            <input type="text" name="branch_id" required>
+            
+            <label>Eligible Year:</label>
+            <input type="number" name="eligible_year" required>
+            
+            <label>Start Registration Date:</label>
+            <input type="date" name="start_registration" required>
+            
+            <label>End Registration Date:</label>
+            <input type="date" name="end_registration" required>
+            
+            <label>Election Date:</label>
+            <input type="date" name="election_date" required>
+            
+            <label>Election Start Time:</label>
+            <input type="time" name="election_start_time" required>
+            
+            <label>Election End Time:</label>
+            <input type="time" name="election_end_time" required>
+            
+            <label>Voting Method:</label>
+            <select name="voting_method" required>
+                <option value="online">Online</option>
+                <option value="offline">Offline</option>
+            </select>
+            
+            <button type="submit" class="btn">Create Election</button>
+        </form>
+    </div>
+
+    <!-- Include Footer -->
+    <%- include('partials/footer') %>
+
+</body>
+</html>

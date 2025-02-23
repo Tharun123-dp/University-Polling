@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="../css/adminlog.css">
+</head>
+<body>
+    <h1>Admin Login</h1>
+    <form method="post" action="/admin">
+        <input type="text" name="login_id" placeholder="Enter Login ID" required><br><br>
+        <input type="text" name="admin_name" placeholder="Enter Your Name" required><br><br>
+        <input type="email" name="admin_email" placeholder="Enter Your Email" required><br><br>
+        <input type="password" name="admin_password" placeholder="Enter Your Password" required><br><br>
+        
+        <!-- <select name="status" required>
+            <option value="">Select Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+        </select><br><br> -->
+
+        <input type="submit" value="Submit">
+
+        <% if (message && message.length > 0) { %>
+            <h4 class="alert alert-danger mt-4"><%= message %></h4>
+        <% } %>
+    </form>
+</body>
+</html>
