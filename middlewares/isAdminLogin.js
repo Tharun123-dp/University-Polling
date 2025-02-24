@@ -10,10 +10,10 @@ module.exports = (req, res, next) => {
 
     try {
         let decoded = jwt.verify(req.cookies.token, process.env.JWT_KEY);
-        console.log("✅ Token verified:", decoded);
+        // console.log("✅ Token verified:", decoded);
 
-        const query = "SELECT login_id, admin_name, admin_email FROM admin_info WHERE login_id = ?";
-        con.query(query, [decoded.login_id], (error, result) => {
+        const query = "SELECT login_id, admin_name, admin_email FROM admin_info WHERE admin_email = ?";
+        con.query(query, [decoded.admin_email], (error, result) => {
             if (error) {
                 console.error("🚨 Database Error:", error);
                 req.flash("error", "Database error. Please try again.");
@@ -26,7 +26,7 @@ module.exports = (req, res, next) => {
                 return res.redirect("/admin/login");
             }
 
-            console.log("✅ Admin found:", result[0]);
+            // console.log("✅ Admin found:", result[0]);
             req.admin = result[0]; // Attach admin details
             next();
         });

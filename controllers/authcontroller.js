@@ -1,46 +1,42 @@
 const con = require("../connection");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const generateToken = require("../utils/generatetoken");  // ✅ Correct import
+const generateToken = require("../utils/generatetoken");
 
 module.exports.registeradmin = async (req, res) => {
     try {
-        const { login_id, admin_name, admin_email, admin_password } = req.body;
+        const { admin_name, admin_email, admin_password } = req.body;
 
-        if (!login_id || !admin_name || !admin_email || !admin_password) {
+        if (!admin_name || !admin_email || !admin_password) {
             req.flash("message", "All fields are required.");
             return res.redirect("/admin");
         }
 
-        const checkQuery = "SELECT login_id FROM admin_info WHERE login_id = ?";
-        con.query(checkQuery, [login_id], async (error, result) => {
+        const checkQuery = "SELECT admin_email FROM admin_info WHERE admin_email = ?";
+        con.query(checkQuery, [admin_email], async (error, result) => {
             if (error) {
                 req.flash("message", "Database error! Please try again.");
                 return res.redirect("/admin");
             }
 
             if (result.length > 0) {
-                req.flash("message", "Login ID already exists.");
+                req.flash("message", "Email already registered.");
                 return res.redirect("/admin");
             }
 
             let hashedPassword = await bcrypt.hash(admin_password, 10);
-
-            const insertQuery =
-                "INSERT INTO admin_info (login_id, admin_name, admin_email, admin_password) VALUES (?, ?, ?, ?)";
-            con.query(insertQuery, [login_id, admin_name, admin_email, hashedPassword], (insertError) => {
+            const insertQuery = "INSERT INTO admin_info (admin_name, admin_email, admin_password) VALUES (?, ?, ?)";
+            con.query(insertQuery, [admin_name, admin_email, hashedPassword], (insertError) => {
                 if (insertError) {
                     req.flash("message", "Error inserting data! Try again.");
                     return res.redirect("/admin");
                 }
-
-                let token = generateToken({ login_id: login_id });
+                let token = generateToken({ admin_email });
                 res.cookie("token", token, {
                     httpOnly: true,
                     secure: process.env.NODE_ENV === "production",
                     sameSite: "strict",
                 });
-
                 req.flash("message", "Admin registered successfully.");
                 res.redirect("/admin/login");
             });
@@ -53,29 +49,24 @@ module.exports.registeradmin = async (req, res) => {
 
 module.exports.loginuser = async (req, res) => {
     try {
-        const { login_id, admin_password } = req.body;
-
-        const query = "SELECT * FROM admin_info WHERE login_id = ?";
-        con.query(query, [login_id], async (error, result) => {
+        const { admin_email, admin_password } = req.body;
+        const query = "SELECT * FROM admin_info WHERE admin_email = ?";
+        con.query(query, [admin_email], async (error, result) => {
             if (error) {
                 req.flash("error", "Database error! Please try again.");
                 return res.redirect("/admin/login");
             }
-
             if (result.length === 0) {
-                req.flash("error", "Invalid login ID or password.");
+                req.flash("error", "Invalid email or password.");
                 return res.redirect("/admin/login");
             }
-
             let admin = result[0];
             let isMatch = await bcrypt.compare(admin_password, admin.admin_password);
-
             if (!isMatch) {
-                req.flash("error", "Invalid login ID or password.");
+                req.flash("error", "Invalid email or password.");
                 return res.redirect("/admin/login");
             }
-
-            let token = generateToken(admin);
+            let token = generateToken({ admin_email: admin.admin_email });
             res.cookie("token", token, { httpOnly: true, secure: false });
             req.flash("success", "Logged in successfully!");
             return res.redirect("/admin/dash");
@@ -87,9 +78,7 @@ module.exports.loginuser = async (req, res) => {
 };
 
 module.exports.logout = (req, res) => {
-    // Clear the token cookie
     res.cookie("token", "", { expires: new Date(0) });
-
     req.flash("success", "Logged out successfully.");
-    res.redirect("/admin/login");  // Redirect to login page after logout
+    res.redirect("/admin/login");
 };

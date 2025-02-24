@@ -33,7 +33,7 @@
             box-sizing: border-box;
         }
 
-        input[type="text"],
+        input[type="email"],
         input[type="password"],
         input[type="submit"] {
             width: calc(100% - 24px);
@@ -90,7 +90,7 @@
         <p style="color: red;"><%= message %></p>
     <% } %>
     <form method="post" action="/admin/login">
-        <input type="text" name="login_id" placeholder="Enter User ID" required><br><br>
+        <input type="email" name="admin_email" placeholder="Enter Email" required><br><br>
         <input type="password" name="admin_password" placeholder="Enter Password" required><br><br>
         <input type="submit" value="Login">
     </form>
