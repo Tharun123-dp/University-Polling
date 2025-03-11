@@ -24,6 +24,9 @@
             background-color: #343a40;
             padding: 15px 30px;
             color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
         .navbar .logo a {
@@ -40,13 +43,13 @@
         }
 
         .nav-links li {
-            color: white;
-            font-size: 1rem;
             padding: 8px 15px;
             cursor: pointer;
+            transition: background 0.3s ease;
         }
 
-        .nav-links li:hover {
+        .nav-links li:hover,
+        .nav-links li.active {
             background-color: rgba(255, 255, 255, 0.2);
             border-radius: 5px;
         }
@@ -54,25 +57,37 @@
         .nav-links li a {
             color: white;
             text-decoration: none;
+            font-size: 1rem;
         }
 
-        /* Main Content */
-        .container {
-            width: 80%;
-            margin: 20px auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        /* Mobile Navigation */
+        .menu-toggle {
+            display: none;
+            font-size: 1.8rem;
+            cursor: pointer;
         }
 
-        /* Footer Styling */
-        footer {
-            background-color: #343a40;
-            color: white;
-            text-align: center;
-            padding: 15px;
-            margin-top: 20px;
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 60px;
+                right: 20px;
+                background: #343a40;
+                width: 200px;
+                text-align: center;
+                border-radius: 5px;
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
         }
     </style>
 </head>
@@ -86,24 +101,29 @@
             </div>
 
             <ul class="nav-links">
-                <li>Profile</li>
-                <li>Students</li>
-                <li>Elections</li>
+                <li><a href="/admin/profile">Profile</a></li>
+                <li><a href="/admin/students">Students</a></li>
+                <li><a href="/admin/elections">Elections</a></li>
                 <li><a href="/admin/logout">Logout</a></li>
             </ul>
+
+            <!-- Mobile Menu Toggle -->
+            <div class="menu-toggle" onclick="toggleMenu()">☰</div>
         </nav>
     </header>
 
-    <!-- Main Content -->
-    <div class="container">
-        <h1>Welcome to the Admin Dashboard</h1>
-        <p>Manage students, elections, and other administrative tasks from here.</p>
-    </div>
+    <script>
+        function toggleMenu() {
+            document.querySelector('.nav-links').classList.toggle('active');
+        }
 
-    <!-- Footer -->
-    <!-- <footer>
-        <p>&copy; 2025 Admin Panel | All Rights Reserved.</p>
-    </footer> -->
+        // Highlight Active Page
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            if (link.href === window.location.href) {
+                link.parentElement.classList.add('active');
+            }
+        });
+    </script>
 
 </body>
 </html>

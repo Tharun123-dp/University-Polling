@@ -3,7 +3,7 @@ const con = require("../connection");
 
 module.exports = (req, res, next) => {
     if (!req.cookies.token) {
-        console.log("🚨 No token found. Redirecting to login.");
+        // console.log("🚨 No token found. Redirecting to login.");
         req.flash("error", "You need to log in first.");
         return res.redirect("/admin/login");
     }
@@ -21,7 +21,7 @@ module.exports = (req, res, next) => {
             }
 
             if (result.length === 0) {
-                console.log("🚨 No admin found in database. Redirecting to login.");
+                // console.log("🚨 No admin found in database. Redirecting to login.");
                 req.flash("error", "Invalid session. Please log in again.");
                 return res.redirect("/admin/login");
             }

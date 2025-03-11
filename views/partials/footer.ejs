@@ -17,8 +17,8 @@
 
         <div class="footer-section">
             <h3>Contact</h3>
-            <p>Email: admin@university.com</p>
-            <p>Phone: +91 12345 67890</p>
+            <p>Email: <a href="mailto:admin@university.com">admin@university.com</a></p>
+            <p>Phone: <a href="tel:+911234567890">+91 12345 67890</a></p>
         </div>
     </div>
     
@@ -34,6 +34,9 @@
         padding: 20px 0;
         text-align: center;
         margin-top: 20px;
+        position: relative;
+        width: 100%;
+        bottom: 0;
     }
 
     .footer-container {
@@ -66,15 +69,34 @@
     .footer-section ul li a {
         color: white;
         text-decoration: none;
+        transition: color 0.3s ease;
     }
 
     .footer-section ul li a:hover {
+        color: #17a2b8;
         text-decoration: underline;
+    }
+
+    .footer-section p a {
+        color: white;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .footer-section p a:hover {
+        color: #17a2b8;
     }
 
     .footer-bottom {
         margin-top: 10px;
         border-top: 1px solid #555;
         padding-top: 10px;
+    }
+
+    @media (max-width: 768px) {
+        .footer-container {
+            flex-direction: column;
+            text-align: center;
+        }
     }
 </style>

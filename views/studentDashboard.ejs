@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f4;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .input-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            border: none;
+            background: #007BFF;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .election-list {
+            margin-top: 20px;
+        }
+
+        .election-item {
+            padding: 10px;
+            background: #f9f9f9;
+            margin-bottom: 10px;
+            border-left: 5px solid #007BFF;
+            border-radius: 5px;
+        }
+
+        .election-item span {
+            font-weight: bold;
+        }
+
+        .eligibility {
+            color: green;
+            font-weight: bold;
+        }
+        
+        .not-eligible {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Welcome, <%= student.fname %> <%= student.lname %>!</h1>
+
+        <div class="input-container">
+            <label for="regno">Enter Your Registration Number:</label><br>
+            <input type="text" id="regno" value="<%= student.regno %>" readonly />
+            <button onclick="fetchElections()">Check Elections</button>
+        </div>
+
+        <div class="election-list">
+            <% if (elections.length > 0) { %>
+                <% elections.forEach(election => { %>
+                    <div class="election-item">
+                        <span>Election:</span> <%= election.name %> <br>
+                        <span>Status:</span> <%= election.status %> <br>
+                        <% if (election.eligible) { %>
+                            <p class="eligibility">You are eligible to vote!</p>
+                            <a href="/vote/<%= election.id %>">
+                                <button>Vote Now</button>
+                            </a>
+                        <% } else { %>
+                            <p class="not-eligible">You are not eligible for this election.</p>
+                        <% } %>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <p>No ongoing elections at the moment.</p>
+            <% } %>
+        </div>
+    </div>
+
+</body>
+</html>

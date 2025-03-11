@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Election</title>
+    <link rel="stylesheet" href="/css/styles.css"> <!-- Include your CSS file -->
+</head>
+<body>
+
+    <% include header.ejs %> <!-- Include the Header -->
+
+    <div class="container">
+        <h2>Edit Election</h2>
+
+        <form action="/admin/updateElection/<%= election.election_id %>" method="POST">
+            <label>Election Name:</label>
+            <input type="text" name="election_name" value="<%= election.election_name %>" required>
+
+            <label>Election Roles:</label>
+            <input type="text" name="election_roles" value="<%= election.election_roles %>" required>
+
+            <label>Eligible Year:</label>
+            <input type="number" name="eligible_year" value="<%= election.eligible_year %>" required>
+
+            <label>Start Registration Date:</label>
+            <input type="date" name="start_registration_date" value="<%= election.start_registration_date %>" required>
+
+            <label>End Registration Date:</label>
+            <input type="date" name="end_registration_date" value="<%= election.end_registration_date %>" required>
+
+            <label>Election Date:</label>
+            <input type="date" name="election_date" value="<%= election.election_date %>" required>
+
+            <label>Election Start Time:</label>
+            <input type="time" name="election_start_time" value="<%= election.election_start_time %>" required>
+
+            <label>Election End Time:</label>
+            <input type="time" name="election_end_time" value="<%= election.election_end_time %>" required>
+
+            <button type="submit">Update Election</button>
+        </form>
+    </div>
+
+    <% include footer.ejs %> <!-- Include the Footer -->
+
+</body>
+</html>

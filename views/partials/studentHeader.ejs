@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polling System</title>
+    <style>
+        /* Reset default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Georgia', 'Times New Roman', Times, serif;
+}
+
+/* Common Styles */
+body {
+    min-height: 100vh;
+    background-color: #f5f5f5;
+}
+
+/* Header Styling */
+header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 65px;
+    padding: 0 20px;
+}
+
+/* Logo Styling */
+.logo {
+    display: flex;
+    align-items: center;
+    font-size: 22px;
+    font-weight: bold;
+    color: black;
+}
+
+.logo img {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+}
+
+/* Nav Links */
+nav ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    align-items: center;
+}
+
+nav li {
+    padding: 10px 15px;
+}
+
+nav a {
+    text-decoration: none;
+    color: black;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+}
+
+nav a:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Sidebar for Mobile */
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 250px;
+    height: 100vh;
+    background: rgba(250, 247, 247, 0.9);
+    backdrop-filter: blur(10px);
+    box-shadow: -5px 0 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding-top: 20px;
+    transition: right 0.3s ease-in-out;
+}
+
+.sidebar.active {
+    right: 0;
+}
+
+.sidebar li {
+    width: 100%;
+    padding: 15px;
+}
+
+.sidebar a {
+    width: 100%;
+    display: block;
+    text-align: left;
+}
+
+/* Mobile Menu Button */
+.menubutton {
+    display: none;
+    cursor: pointer;
+}
+
+.menubutton svg {
+    width: 30px;
+    height: 30px;
+}
+
+/* Footer Styling */
+footer {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    text-align: center;
+    padding: 15px 0;
+    box-shadow: 0px -4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    bottom: 0;
+}
+
+footer p {
+    font-size: 16px;
+    color: black;
+}
+
+/* Responsive Design */
+@media (max-width: 800px) {
+    .hideOnMobile {
+        display: none;
+    }
+    .menubutton {
+        display: block;
+    }
+}
+
+@media (max-width: 400px) {
+    .sidebar {
+        width: 100%;
+    }
+}
+
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="../images/uvce_logo.png" alt="UVCE Logo"> UVCE Polling
+            </div>
+            <ul class="sidebar">
+                <li onclick="hideSidebar()">
+                    <a href="#">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#5f6368">
+                            <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+                        </svg>
+                    </a>
+                </li>
+                <li><a href="/home">Home</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/elections">Elections</a></li>
+                <li><a href="/login">Login</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+            <ul>
+                <li class="hideOnMobile"><a href="/home">Home</a></li>
+                <li class="hideOnMobile"><a href="/about">About</a></li>
+                <li class="hideOnMobile"><a href="/elections">Elections</a></li>
+                <li class="hideOnMobile"><a href="/login">Login</a></li>
+                <li class="hideOnMobile"><a href="/logout">Logout</a></li>
+                <li class="menubutton" onclick="showSidebar()">
+                    <a href="#">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="26" viewBox="0 -960 960 960" width="26" fill="#5f6368">
+                            <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/>
+                        </svg>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Footer -->
+    
+
+    <!-- Sidebar Toggle Script -->
+    <script>
+        function showSidebar() {
+            document.querySelector('.sidebar').classList.add('active');
+        }
+
+        function hideSidebar() {
+            document.querySelector('.sidebar').classList.remove('active');
+        }
+    </script>
+
+</body>
+</html>

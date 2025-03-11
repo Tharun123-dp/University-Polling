@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Student</title>
+    <link rel="stylesheet" href="/css/styles.css"> <!-- Include your CSS file -->
+</head>
+<body>
+
+    <% include header.ejs %> <!-- Include the Header -->
+
+    <div class="container">
+        <h2>Edit Student</h2>
+
+        <form action="/admin/updateStudent/<%= student.student_id %>" method="POST">
+            <label>First Name:</label>
+            <input type="text" name="fname" value="<%= student.fname %>" required>
+
+            <label>Last Name:</label>
+            <input type="text" name="lname" value="<%= student.lname %>" required>
+
+            <label>Gender:</label>
+            <select name="gender" required>
+                <option value="Male" <%= student.gender === "Male" ? "selected" : "" %>>Male</option>
+                <option value="Female" <%= student.gender === "Female" ? "selected" : "" %>>Female</option>
+            </select>
+
+            <label>Address:</label>
+            <textarea name="address" required><%= student.address %></textarea>
+
+            <label>Phone Number:</label>
+            <input type="text" name="mno" value="<%= student.mno %>" required>
+
+            <label>Email:</label>
+            <input type="email" name="email" value="<%= student.email %>" required>
+
+            <label>Registration Number:</label>
+            <input type="text" name="regno" value="<%= student.regno %>" required>
+
+            <label>Year:</label>
+            <input type="number" name="year" value="<%= student.year %>" required>
+
+            <button type="submit">Update Student</button>
+        </form>
+    </div>
+
+    <% include footer.ejs %> <!-- Include the Footer -->
+
+</body>
+</html>

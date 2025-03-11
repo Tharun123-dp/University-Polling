@@ -5,123 +5,376 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Election</title>
     <style>
+        /* General Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Body Styling */
+        /* body {
+            background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 100vh;
+            padding: 20px;
+        } */
+
+        /* Header Styling */
+        /* .header {
+            width: 100%;
+            background-color: #343a40;
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        } */
+
+        /* Container for Form
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 80px; /* Pushes form down below header */
+        /* Ensure the body takes full height */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
-            padding: 20px;
+            padding: 0;
         }
-        .container {
-            width: 50%;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+
+/* Header Styling */
+/* .header {
+    width: 100%;
+    background-color: #343a40;
+    color: white;
+    padding: 15px 0;
+    text-align: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+} */
+
+/* Footer Styling */
+/* .footer {
+    width: 100%;
+    background-color: #343a40;
+    color: white;
+    padding: 15px 0;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+} */
+
+/* Main Content Container */
+/* Center the form */
+/* Center the form properly */
+.container {
+    width: 100%;
+    max-width: 600px;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin: auto;
+    margin-top: 80px;  /* Pushes it below the fixed header */
+    margin-bottom: 80px; /* Pushes it above the fixed footer */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 160px); /* Ensures it takes full height, accounting for header & footer */
+}
+
+
+
+
+
+
+
+        /* Form Elements */
+        h1 {
+            margin-bottom: 30px;
         }
-        h2 {
-            text-align: center;
-        }
+
         label {
+            display: block;
             font-weight: bold;
+            margin: 10px 0 5px;
+            text-align: left;
         }
+
         input, select {
             width: 100%;
-            padding: 8px;
-            margin: 8px 0;
+            padding: 10px;
+            margin-bottom: 15px;
             border: 1px solid #ccc;
-            border-radius: 4px;
+            border-radius: 5px;
+            font-size: 16px;
         }
+
+        /* Degree & Branch Container */
+        .degree-container, .branch-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        /* Checkboxes for Degree & Branch */
+        input[type="checkbox"] {
+            transform: scale(1.2);
+            margin-left: 5px;
+        }
+
+        /* Voting & Volunteering */
+        .checkbox-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        /* Buttons */
         .btn {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             background-color: #28a745;
             color: white;
             border: none;
             cursor: pointer;
-            border-radius: 4px;
+            border-radius: 5px;
+            font-size: 18px;
+            transition: 0.3s;
         }
+
         .btn:hover {
             background-color: #218838;
         }
 
-        @media (max-width: 800px) {
-            .container {
-                width: 70%;
-            }
-        }
+        /* Footer
+        .footer {
+            width: 100%;
+            background-color: #343a40;
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            z-index: 1000;
+        } */
 
-        @media (max-width: 400px) {
+        /* Responsive */
+        @media (max-width: 600px) {
             .container {
-                width: 90%;
-                padding: 15px;
+                max-width: 90%;
+            }
+
+            .checkbox-container {
+                flex-direction: column;
+                align-items: start;
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- Include Header -->
-    <%- include('partials/header') %>
+    <!-- Header -->
+        <%- include('partials/header') %>
+    
 
     <div class="container">
         <h1>Create Election</h1>
 
-        <form action="/create-election" method="POST">
-            <label>Election ID:</label>
-            <input type="text" name="election_id" required>
-            
-            <label>Election Name:</label>
-            <input type="text" name="election_name" required>
-            
-            <label>Election Roles:</label>
-            <input type="text" name="election_roles" required>
-            
-            <label>Responsibilities:</label>
-            <input type="text" name="responsibility" required>
-            
-            <label>All Degree:</label>
-            <input type="text" name="all_degree" required>
-            
-            <label>Degree ID:</label>
-            <input type="text" name="degree_id" required>
-            
-            <label>All Branch:</label>
-            <input type="text" name="all_branch" required>
-            
-            <label>Branch ID:</label>
-            <input type="text" name="branch_id" required>
-            
-            <label>Eligible Year:</label>
-            <input type="number" name="eligible_year" required>
-            
-            <label>Start Registration Date:</label>
-            <input type="date" name="start_registration" required>
-            
-            <label>End Registration Date:</label>
-            <input type="date" name="end_registration" required>
-            
-            <label>Election Date:</label>
-            <input type="date" name="election_date" required>
-            
-            <label>Election Start Time:</label>
-            <input type="time" name="election_start_time" required>
-            
-            <label>Election End Time:</label>
-            <input type="time" name="election_end_time" required>
-            
-            <label>Voting Method:</label>
-            <select name="voting_method" required>
-                <option value="online">Online</option>
-                <option value="offline">Offline</option>
+        <form action="/admin/create" method="POST">
+            <label for="election_name">Election Name:</label>
+            <input type="text" id="election_name" name="election_name" required>
+
+            <label for="election_roles">Election Roles:</label>
+            <input type="text" id="election_roles" name="election_roles" required>
+
+            <!-- Degree Selection with Checkbox -->
+            <div class="degree-container">
+                <label for="degreeSelect">All Degrees:</label>
+                <input type="checkbox" id="all_degree" name="all_degree" value="1">
+                <label for="all_degree">Degree</label>
+                <select name="degree_id" id="degreeSelect">
+                    <option value="">-- Select Degree --</option>
+                    <% degrees.forEach(degree => { %>
+                        <option value="<%= degree.degree_id %>"><%= degree.degree_name %></option>
+                    <% }); %>
+                </select>
+            </div>
+
+            <!-- Branch Selection with Checkbox -->
+            <div class="branch-container">
+                <label for="branchSelect">All branches:</label>
+                <input type="checkbox" id="all_branch" name="all_branch" value="1">
+                <label for="all_branch">Branch</label>
+                <select name="branch_id" id="branchSelect">
+                    <option value="">-- Select Branch --</option>
+                </select>
+            </div>
+
+            <label for="eligible_year">Eligible Year:</label>
+            <select name="eligible_year" id="eligible_year" required>
+                <option value="">-- Select Year --</option>
+                <option value="all">All Years</option>
+                <option value="1">1st Year</option>
+                <option value="2">2nd Year</option>
+                <option value="3">3rd Year</option>
+                <option value="4">4th Year</option>
             </select>
+
+            <label for="start_registration_date">Start Registration Date:</label>
+            <input type="date" id="start_registration_date" name="start_registration_date" required>
+
+            <label for="end_registration_date">End Registration Date:</label>
+            <input type="date" id="end_registration_date" name="end_registration_date" required>
+
+            <label for="election_date">Election Date:</label>
+            <input type="date" id="election_date" name="election_date" required>
+
+            <label for="election_start_time">Election Start Time:</label>
+            <input type="time" id="election_start_time" name="election_start_time" required>
+
+            <label for="election_end_time">Election End Time:</label>
+            <input type="time" id="election_end_time" name="election_end_time" required>
+
             
+
             <button type="submit" class="btn">Create Election</button>
         </form>
     </div>
 
-    <!-- Include Footer -->
-    <%- include('partials/footer') %>
-
+        <%- include('partials/footer') %>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                let degreeSelect = document.getElementById("degreeSelect");
+                let branchSelect = document.getElementById("branchSelect");
+                let allDegreeCheckbox = document.getElementById("all_degree");
+                let allBranchCheckbox = document.getElementById("all_branch");
+            
+                // Handle "All Degrees" checkbox
+                allDegreeCheckbox.addEventListener("change", function () {
+                    if (this.checked) {
+                        degreeSelect.disabled = true;
+                        branchSelect.innerHTML = '<option value="">-- Select Branch --</option>'; // Reset branches
+                        allBranchCheckbox.checked = true;
+                        branchSelect.disabled = true;
+                    } else {
+                        degreeSelect.disabled = false;
+                        allBranchCheckbox.checked = false;
+                        branchSelect.disabled = false;
+                    }
+                });
+            
+                // Handle "All Branches" checkbox
+                allBranchCheckbox.addEventListener("change", function () {
+                    if (this.checked) {
+                        branchSelect.disabled = true;
+                        branchSelect.innerHTML = '<option value="">-- Select Branch --</option>';
+                    } else {
+                        branchSelect.disabled = false;
+                    }
+                });
+            
+                // Fetch branches when a degree is selected
+                degreeSelect.addEventListener("change", function () {
+                    let degreeId = this.value;
+                    branchSelect.innerHTML = '<option value="">-- Select Branch --</option>';
+            
+                    if (degreeId) {
+                        fetch(`/admin/branches/${degreeId}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                data.forEach(branch => {
+                                    let option = document.createElement("option");
+                                    option.value = branch.branch_id;
+                                    option.textContent = branch.branch_name;
+                                    branchSelect.appendChild(option);
+                                });
+                            })
+                            .catch(error => console.error("Error fetching branches:", error));
+                    }
+                });
+            
+                // Date and Time Validation
+                let startRegistration = document.getElementById("start_registration_date");
+                let endRegistration = document.getElementById("end_registration_date");
+                let electionDate = document.getElementById("election_date");
+                let electionStartTime = document.getElementById("election_start_time");
+                let electionEndTime = document.getElementById("election_end_time");
+                let form = document.querySelector("form");
+            
+                // Disable past dates
+                let today = new Date().toISOString().split("T")[0];
+                startRegistration.setAttribute("min", today);
+                endRegistration.setAttribute("min", today);
+                electionDate.setAttribute("min", today);
+            
+                function validateDates() {
+                    let startRegDate = new Date(startRegistration.value);
+                    let endRegDate = new Date(endRegistration.value);
+                    let electionDay = new Date(electionDate.value);
+            
+                    if (startRegDate >= endRegDate) {
+                        alert("❌ End Registration Date must be after Start Registration Date.");
+                        endRegistration.value = "";
+                        return false;
+                    }
+            
+                    if (endRegDate >= electionDay) {
+                        alert("❌ Election Date must be after End Registration Date.");
+                        electionDate.value = "";
+                        return false;
+                    }
+            
+                    return true;
+                }
+            
+                function validateTime() {
+                    let electionStart = electionStartTime.value;
+                    let electionEnd = electionEndTime.value;
+            
+                    if (electionStart >= electionEnd) {
+                        alert("❌ Election End Time must be after Election Start Time.");
+                        electionEndTime.value = "";
+                        return false;
+                    }
+            
+                    return true;
+                }
+            
+                // Attach event listeners for validation
+                startRegistration.addEventListener("change", validateDates);
+                endRegistration.addEventListener("change", validateDates);
+                electionDate.addEventListener("change", validateDates);
+                electionStartTime.addEventListener("change", validateTime);
+                electionEndTime.addEventListener("change", validateTime);
+            
+                // Prevent form submission if validation fails
+                form.addEventListener("submit", function (event) {
+                    if (!validateDates() || !validateTime()) {
+                        event.preventDefault();
+                    }
+                });
+            });
+            </script>
+            
 </body>
 </html>

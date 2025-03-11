@@ -3,9 +3,10 @@ const app = express();
 const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
 const session = require("express-session");
-const flash = require("connect-flash");
+const flash = require("express-flash");
 const cookieParser = require("cookie-parser");
 const adminRouter = require("./routes/admin");
+const userRouter = require("./routes/student");
 const con = require("./connection");
 
 // Load environment variables
@@ -46,6 +47,31 @@ app.get("/", (req, res) => {
 
 // Admin routes
 app.use("/admin", adminRouter);
+app.use("/student", userRouter);
+
+// 🔄 **Election Status Update Function**
+const updateElectionStatus = () => {
+    const query = `
+        UPDATE election_info 
+        SET status = 
+            CASE 
+                WHEN NOW() BETWEEN election_date AND election_end_time THEN 'active'
+                WHEN NOW() > election_end_time THEN 'completed'
+                ELSE 'upcoming'
+            END
+    `;
+
+    con.query(query, (err, result) => {
+        if (err) {
+            console.error("❌ Error updating election statuses:", err);
+        } else {
+            console.log("✅ Election statuses updated successfully");
+        }
+    });
+};
+
+// Run this function every **60 seconds** to update election statuses
+setInterval(updateElectionStatus, 60000);
 
 // Start server
 app.listen(7000, () => {
