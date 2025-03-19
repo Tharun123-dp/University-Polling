@@ -9,6 +9,7 @@ const bcrypt = require("bcrypt");
 })();
 
 // // ✅ Edit Student (Render Edit Page)
+
 // router.get("/editStudent/:id", isAdminLogin, (req, res) => {
 //     const studentId = req.params.id;
 
@@ -167,3 +168,6 @@ const bcrypt = require("bcrypt");
 //         res.render("admin/students", { admin: req.admin, students });
 //     });
 // });
+
+// heyyyy see now i want to clarify my plan to you for this polling website :
+// after getting the voting information through table in the action column instead of vote during registration period it should show contest button means students can participate for that election only when admin approves that (so give me code for that approval also) then after registration period during election date the students can vote thats all then the count of votes is compulsory updating that also no changing of votes and then after election day then on the next day only winner of the election should be available for students then admin should have control of voted students in voted_students_info table (election_id, regno, contestant_id, date , time)   and then contestant of elections through contestant_election_info table (election_id, regno, color, no_of_votes)  dont worry about color it is a color for particular individual contestant and it is also in table color_info (color_id, color_name) 

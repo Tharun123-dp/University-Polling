@@ -1,51 +1,253 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content=""/>
-    <meta name="keywords" content=""/>
-    <title>Polling</title>
-    <link rel="stylesheet" href="../css/home.css"/>
-    
+    <title>University Election System</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px;
+            background: #002147;
+            color: #fff;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        nav ul li {
+            margin: 0 20px;
+            position: relative;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+        nav ul li a:hover {
+            color: #f4b400;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background: #fff;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            min-width: 180px;
+            z-index: 1;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        .dropdown-content a {
+            color: #002147;
+            padding: 12px;
+            display: block;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        .dropdown-content a:hover {
+            background: #f4b400;
+            color: #fff;
+        }
+        .hero {
+            background: url('/images/UVCE_New.jpg') no-repeat center center/cover;
+            height: 85vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+        .hero-content {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 600px;
+        }
+        .hero h1 {
+            font-size: 3rem;
+        }
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 25px;
+            background: #f4b400;
+            color: #002147;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #002147;
+            color: #fff;
+        }
+        
+        footer {
+            background: #002147;
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+        footer ul {
+            list-style: none;
+            padding: 0;
+        }
+        footer ul li {
+            display: inline;
+            margin: 0 15px;
+        }
+        footer ul li a {
+            color: white;
+            text-decoration: none;
+        }
+        @media (max-width: 400px) {
+            header {
+                flex-direction: column;
+                text-align: center;
+                padding: 15px;
+            }
+            .logo {
+                font-size: 1.5rem;
+            }
+            nav ul {
+                display: none;
+                flex-direction: column;
+                background: #002147;
+                width: 100%;
+                position: absolute;
+                top: 60px;
+                left: 0;
+                padding: 10px 0;
+            }
+            .menu-icon {
+                display: block;
+                font-size: 2rem;
+                cursor: pointer;
+            }
+            nav ul li {
+                margin: 10px 0;
+                text-align: center;
+            }
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .btn {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <%- include('partials/studentHeader') %>
+    <header>
+        <div class="logo">University Polling</div>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/student/elections">Elections</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropbtn">Login</a>
+                    <div class="dropdown-content">
+                        <a href="/admin/login">Admin Login</a>
+                        <a href="/student/login">Student Login</a>
+                    </div>
+                </li>
+                <% if (student) { %>
+                    <li><a href="/student/logout">Logout</a></li>
+                <% } %>
+            </ul>
+        </nav>
+    </header>
 
-    <div class="background-overlay"></div>
+    <div id="flash-message" class="flash-message">
+        <% if (messages.success) { %>
+            <div class="alert success"><%= messages.success %></div>
+        <% } %>
+        <% if (messages.error) { %>
+            <div class="alert error"><%= messages.error %></div>
+        <% } %>
+    </div>
     
 
-    <section id="home">
-        <div class="container">
-            <!-- <img class="behind" src="../images/UVCE_New.jpg"/> -->
-
-            <div class="content">
-                <h1 class="text-box1">UNIVERSITY POLLING</h1>
-                <p class="text-box2">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quam quidem provident cupiditate aspernatur veniam expedita vitae molestias quaerat doloremque vel, rerum quo adipisci incidunt minima odit, quod animi quasi suscipit?</p>
-            </div>
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Welcome to the University Polling System</h1>
+            <p>Ensuring fair and transparent elections for students and faculty.</p>
+            <a href="/about" class="btn">Learn More</a>
         </div>
     </section>
-
-    <section id="about">
-        <!-- <div class="container">
-            <h1>This is the platform to vote</h1>
-        </div> -->
-    </section>
-
-    <section id="services">
-
-    </section>
-
-    <section id="contact">
-
-    </section>
-
     
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 University Polling System. All Rights Reserved.</p>
+        </div>
+    </footer>
 
+    <style>
+        .flash-message {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
+    text-align: center;
+    z-index: 1000;
+}
 
-    <%- include('partials/studentFooter') %>
+.alert {
+    padding: 15px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    display: inline-block;
+}
 
+.success {
+    background: #4CAF50;
+    color: white;
+}
+
+.error {
+    background: #f44336;
+    color: white;
+}
+
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(() => {
+        const flashMessage = document.getElementById("flash-message");
+        if (flashMessage) {
+            flashMessage.style.display = "none";
+        }
+    }, 2000); // Hides message after 2 seconds
+});
+
+    </script>
 </body>
-</html>    
+
+</html>

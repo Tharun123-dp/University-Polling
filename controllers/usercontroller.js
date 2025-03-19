@@ -38,7 +38,7 @@ module.exports.loginStudent = async (req, res) => {
             };
 
             req.flash("success", "Logged in successfully!");
-            return res.redirect("/student/dashboard"); // ✅ Redirect to dashboard
+            return res.redirect("/"); // ✅ Redirect to dashboard
         });
     } catch (err) {
         req.flash("error", "An error occurred during login.");
@@ -47,8 +47,9 @@ module.exports.loginStudent = async (req, res) => {
 };
 
 module.exports.logoutStudent = (req, res) => {
+    req.flash("success", "Logged out successfully."); // ✅ Store the flash message first
     req.session.destroy(() => {
-        req.flash("success", "Logged out successfully.");
-        res.redirect("/student/login");
+        res.redirect("/"); // ✅ Redirect after session is destroyed
     });
 };
+

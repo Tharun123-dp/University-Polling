@@ -25,11 +25,12 @@ app.use(flash());
 
 // Middleware for flash messages
 app.use((req, res, next) => {
-    res.locals.message = req.flash("message");
-    res.locals.error = req.flash("error");
-    res.locals.success = req.flash("success");
+    res.locals.message = req.flash("message") || [];
+    res.locals.error = req.flash("error") || [];
+    res.locals.success = req.flash("success") || [];
     next();
 });
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -42,7 +43,11 @@ app.use(express.static("public"));
 
 // Home route
 app.get("/", (req, res) => {
-    res.render("home");
+    res.render("home", { student: req.session.student });
+});
+
+app.get("/about", (req, res) => {
+    res.render("about");
 });
 
 // Admin routes
@@ -55,8 +60,9 @@ const updateElectionStatus = () => {
         UPDATE election_info 
         SET status = 
             CASE 
-                WHEN NOW() BETWEEN election_date AND election_end_time THEN 'active'
-                WHEN NOW() > election_end_time THEN 'completed'
+                WHEN NOW() >= CONCAT(election_date, ' ', election_start_time) 
+                     AND NOW() <= CONCAT(election_date, ' ', election_end_time) THEN 'active'
+                WHEN NOW() > CONCAT(election_date, ' ', election_end_time) THEN 'completed'
                 ELSE 'upcoming'
             END
     `;
@@ -65,10 +71,11 @@ const updateElectionStatus = () => {
         if (err) {
             console.error("❌ Error updating election statuses:", err);
         } else {
-            console.log("✅ Election statuses updated successfully");
+            console.log(`✅ Election statuses updated. ${result.affectedRows} rows affected.`);
         }
     });
 };
+
 
 // Run this function every **60 seconds** to update election statuses
 setInterval(updateElectionStatus, 60000);

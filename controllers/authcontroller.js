@@ -80,5 +80,5 @@ module.exports.loginuser = async (req, res) => {
 module.exports.logout = (req, res) => {
     res.cookie("token", "", { expires: new Date(0) });
     req.flash("success", "Logged out successfully.");
-    res.redirect("/admin/login");
+    res.redirect("/");
 };

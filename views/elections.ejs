@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Elections</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 40px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        h2 {
+            text-align: center;
+            color: #002147;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background: #002147;
+            color: white;
+        }
+        .btn {
+            padding: 8px;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .contest-btn { background: #f4b400; }
+        .vote-btn { background: #28a745; }
+        .btn:disabled { background: #ccc; cursor: not-allowed; }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            text-align: center;
+        }
+        .close-btn {
+            background: red;
+            color: white;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Available Elections</h2>
+        <% if (student) { %>
+            <p style="text-align: center;">Welcome, <strong><%= student.fname %></strong> (Reg No: <%= student.regno %>)</p>
+        <% } %>
+        <table>
+            <thead>
+                <tr>
+                    <th>Election Name</th>
+                    <th>Roles</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% elections.forEach(election => { %>
+                    <tr>
+                        <td><%= election.election_name %></td>
+                        <td><%= election.election_roles %></td>
+                        <td><%= election.status %></td>
+                        <td>
+                            <% if (election.status === 'registration' && !election.already_contested) { %>
+                                <button class="btn contest-btn" onclick="openContestModal('<%= election.election_id %>', '<%= election.election_name %>')">Contest</button>
+                            <% } else if (election.status === 'active') { %>
+                                <button class="btn vote-btn" onclick="vote('<%= election.election_id %>')">Vote</button>
+                            <% } else { %>
+                                <button class="btn" disabled>Completed</button>
+                            <% } %>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Contest Modal -->
+    <div id="contestModal" class="modal">
+        <div class="modal-content">
+            <h3>Contest Election</h3>
+            <p id="electionName"></p>
+            <label for="whyParticipate">Why do you want to participate?</label>
+            <textarea id="whyParticipate" name="whyParticipate" rows="4" required></textarea>
+            <br><br>
+            <button class="btn contest-btn" onclick="submitContest()">Submit</button>
+            <button class="close-btn" onclick="closeContestModal()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedElectionId = null; // Store the election ID globally
+
+        function openContestModal(electionId, electionName) {
+            selectedElectionId = electionId; // Store electionId globally
+            document.getElementById("electionName").innerText = "Election: " + electionName; // Show election name
+            document.getElementById("contestModal").style.display = "flex";
+        }
+
+        function closeContestModal() {
+            document.getElementById("contestModal").style.display = "none";
+        }
+
+        function submitContest() {
+            let whyParticipate = document.getElementById("whyParticipate").value;
+            if (!whyParticipate) return alert("Please enter a reason before submitting.");
+            
+            console.log("Submitting Contest for Election ID:", selectedElectionId); // Debugging log
+
+            fetch("/contest", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ electionId: selectedElectionId, whyParticipate }) // Send electionId
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                closeContestModal();
+                window.location.reload();
+            })
+            .catch(() => alert("Failed to contest. Please try again."));
+        }
+    </script>
+</body>
+</html>
