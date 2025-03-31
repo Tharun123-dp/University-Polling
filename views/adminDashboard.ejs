@@ -6,18 +6,61 @@
     <title>Admin Dashboard</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Poppins', sans-serif;
             margin: 0;
             padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .header {
+            background: #002147;
+            color: white;
+            padding: 25px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .header .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+        .header a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        .header a:hover {
+            color: #f4b400;
+        }
+        .main-content {
+            background: url('/images/UVCE_New.jpg') no-repeat center center/cover;
+            min-height: 80vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
         }
         .container {
-            width: 80%;
-            margin: auto;
+            width: 85%;
+            max-width: 1000px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 40px;
+            margin: 50px auto;
+            border-radius: 12px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
             text-align: center;
-            padding: 50px 0;
         }
         h1 {
+            color: white;
+            font-size: 2.4rem;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 1.4rem;
+            color: white;
             margin-bottom: 30px;
         }
         .box-container {
@@ -27,59 +70,79 @@
             flex-wrap: wrap;
         }
         .box {
-            width: 250px;
-            height: 150px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 220px;
+            height: 120px;
+            background: linear-gradient(135deg, #9cb4c0, #89a8c4);
+            border-radius: 10px;
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 18px;
+            font-size: 1.5rem;
             font-weight: bold;
             cursor: pointer;
-            transition: transform 0.3s, background-color 0.3s;
+            transition: transform 0.3s, background 0.3s;
             text-decoration: none;
-            color: black;
+            color: white;
+            text-align: center;
+            padding: 20px;
         }
         .box:hover {
             transform: scale(1.05);
-            background-color: #28a745;
-            color: white;
+            background: linear-gradient(135deg, #afd5f7, #8cb6f1);
         }
-
-        @media (max-width: 600px) {
-            .box-container {
-                flex-direction: column;
-                align-items: center;
+        .footer {
+            background: #002147;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 30px;
             }
             .box {
-                width: 90%;
+                width: 100%;
+                height: 140px;
+            }
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .header .nav-links {
+                margin-top: 10px;
             }
         }
     </style>
 </head>
 <body>
-
-    <!-- Include Header -->
-    <%- include('partials/header') %>
-
-    <div class="container">
-        <h1>Welcome to the Admin Dashboard</h1>
-        <p>Manage students, elections, and other administrative tasks from here.</p>
-    </div>
-
-    <div class="container">
-        <h1>Admin Dashboard</h1>
-        <div class="box-container">
-            <a href="/admin/createStudent" class="box">Create Student Account</a>
-            <a href="/admin/create" class="box">Create Election</a>
-            <a href="/admin" class="box">Create Admin</a>
+    <div class="header">
+        <span style="font-size: 1.8rem; font-weight: bold;">Admin Dashboard</span>
+        <div class="nav-links">
+            <a href="/admin/dash">Home</a>
+            <a href="/admin/students">Students</a>
+            <a href="/admin/elections">Elections</a>
+            <a href="/admin/logout">Logout</a>
         </div>
     </div>
 
-    <!-- Include Footer -->
-    <%- include('partials/footer') %>
+    <div class="main-content">
+        <div class="container">
+            <h1>Welcome to the Admin Dashboard</h1>
+            <p>Manage students, elections, and administrative tasks efficiently.</p>
 
+            <div class="box-container">
+                <a href="/admin/createStudent" class="box">Create Student Account</a>
+                <a href="/admin/create" class="box">Create Election</a>
+                <a href="/admin" class="box">Create Admin</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">&copy; 2025 University Election System | All Rights Reserved</div>
 </body>
 </html>

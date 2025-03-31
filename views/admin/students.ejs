@@ -1,100 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Students</title>
+    <title>Students List</title>
+    <link rel="stylesheet" href="/css/admin.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
         .container {
-            width: 90%;
-            margin: auto;
-            padding: 20px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-        }
-        h1 {
             text-align: center;
+            margin: 20px auto;
+            width: 80%;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
             color: #333;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
         }
-        th, td {
-            padding: 10px;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
+
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
         }
+
         th {
-            background-color: #343a40;
+            background-color: #007BFF;
             color: white;
+            font-size: 16px;
         }
-        .edit-btn, .delete-btn {
-            padding: 5px 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+
+        td {
             font-size: 14px;
+            color: #333;
         }
-        .edit-btn {
-            background-color: #ffc107;
-            color: black;
-        }
+
         .delete-btn {
             background-color: #dc3545;
             color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
         }
-        .edit-btn:hover {
-            background-color: #e0a800;
-        }
+
         .delete-btn:hover {
             background-color: #c82333;
         }
     </style>
 </head>
 <body>
-
-    <%- include('partials/header') %>
-
+    <%- include('../partials/header') %>
     <div class="container">
-        <h1>Student Management</h1>
+        <h2>Students List</h2>
         <table>
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Name</th>
-                    <th>Email</th>
-                    <th>Department</th>
+                    <th>USN</th>
+                    <th>Year</th>
+                    <th>Degree</th>
+                    <th>Branch</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <% students.forEach(student => { %>
-                    <tr>
-                        <td><%= student.id %></td>
-                        <td><%= student.name %></td>
-                        <td><%= student.email %></td>
-                        <td><%= student.department %></td>
-                        <td>
-                            <a href="/admin/editStudent/<%= student.id %>" class="edit-btn">Edit</a>
-                            <a href="/admin/deleteStudent/<%= student.id %>" class="delete-btn" onclick="return confirm('Are you sure?')">Delete</a>
-                        </td>
-                    </tr>
-                <% }); %>
+                <tr>
+                    <td><%= student.name %></td>
+                    <td><%= student.regno %></td>
+                    <td><%= student.year %></td>
+                    <td><%= student.degree_name %></td>
+                    <td><%= student.branch_name %></td>
+                    <td>
+                        <form method="post" action="/admin/students/delete/<%= student.regno %>">
+                            <button class="btn delete-btn">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                <% }) %>
             </tbody>
         </table>
     </div>
-
-    <%- include('partials/footer') %>
-
+    <%- include('../partials/footer') %>
 </body>
 </html>

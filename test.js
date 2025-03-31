@@ -8,7 +8,46 @@ const bcrypt = require("bcrypt");
     console.log("Does it match?:", isMatch);
 })();
 
+// heyy now i got this contesting thing let's concentrate on voting thing now
+// see i'll tell my voting theory 
+// see during election date students get voting button so when clicks on that no_of_votes from contestant_election_info table should update  and then the voted students information should be updated to voted_students_info table which contains election_id	,regno	contestant_id,	date	,time	
+// see here regno is the student's usn which regno itself, and then the contestant_id is the regno of contestant who he voted which is contestant_reg_no in contestant_election_info table and then the time and date is the time and date he/she voted 
+// soo give me the perfect vote for this
+
+
+
+router.get("/student/getCandidates", (req, res) => {
+    const { electionId } = req.query;
+    
+    con.query(
+        "SELECT s.regno, s.name FROM contestant_election_info c JOIN student_info s ON c.regno = s.regno WHERE c.election_id = ?",
+        [electionId],
+        (err, results) => {
+            if (err) {
+                console.error("Error fetching candidates:", err);
+                return res.json({ candidates: [] });
+            }
+            res.json({ candidates: results });
+        }
+    );
+});
+router.get("/getContestants", (req, res) => {
+    const electionId = req.query.electionId;
+
+    con.query(
+        `SELECT s.regno, s.name FROM student_info s
+        JOIN contestant_election_info c ON s.regno = c.contestant_regno
+        WHERE c.election_id = ?`,
+        [electionId],
+        (err, results) => {
+            if (err) return res.json([]);
+            res.json(results);
+        }
+    );
+});
+
 // // ✅ Edit Student (Render Edit Page)
+
 
 // router.get("/editStudent/:id", isAdminLogin, (req, res) => {
 //     const studentId = req.params.id;

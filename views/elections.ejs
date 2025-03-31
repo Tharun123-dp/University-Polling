@@ -6,86 +6,121 @@
     <title>Student Elections</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+            background: url('/images/UVCE_New.jpg') no-repeat center center/cover;
+            background: #f4f4f4;
             margin: 0;
             padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
         }
         .container {
-            width: 80%;
-            margin: 40px auto;
-            padding: 20px;
+            /* background: url('/images/UVCE_New.jpg') no-repeat center center/cover; */
+            width: 100%;
+            height: 100vh;
             background: white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
+            padding: 20px;
+            border-radius: 0;
+            box-shadow: none;
+            overflow-y: auto;
         }
         h2 {
             text-align: center;
             color: #002147;
+            margin-bottom: 10px;
+        }
+        .home-btn {
+            display: block;
+            background: #002147;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: auto;
+            text-align: center;
+        }
+        .home-btn:hover {
+            background: #004080;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
+            margin-top: 10px;
         }
         th, td {
             padding: 12px;
             text-align: center;
+            border-bottom: 1px solid #ddd;
         }
         th {
             background: #002147;
             color: white;
         }
         .btn {
-            padding: 8px;
-            color: white;
+            padding: 10px 15px;
             border: none;
             cursor: pointer;
             border-radius: 5px;
+            font-size: 14px;
+            transition: 0.3s;
         }
-        .contest-btn { background: #f4b400; }
-        .vote-btn { background: #28a745; }
-        .btn:disabled { background: #ccc; cursor: not-allowed; }
-        
-        /* Modal Styles */
+        .contest-btn {
+            background: #f4b400;
+            color: white;
+        }
+        .contest-btn:hover {
+            background: #d39e00;
+        }
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
         .modal {
             display: none;
             position: fixed;
-            z-index: 1000;
-            left: 0;
             top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.5);
             justify-content: center;
             align-items: center;
         }
         .modal-content {
             background: white;
             padding: 20px;
-            border-radius: 8px;
-            width: 300px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
             text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-        .close-btn {
-            background: red;
-            color: white;
-            padding: 5px 10px;
-            cursor: pointer;
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
             border-radius: 5px;
-            margin-top: 10px;
+            margin-top: 8px;
+            resize: none;
         }
+        .winner-row {
+            background-color: #dff0d8;
+        }
+        
     </style>
 </head>
 <body>
+    <a href="/" class="home-btn">Back to Home</a>
     <div class="container">
         <h2>Available Elections</h2>
-        <% if (student) { %>
-            <p style="text-align: center;">Welcome, <strong><%= student.fname %></strong> (Reg No: <%= student.regno %>)</p>
-        <% } %>
         <table>
             <thead>
                 <tr>
@@ -93,21 +128,33 @@
                     <th>Roles</th>
                     <th>Status</th>
                     <th>Action</th>
+                    <th>Winner</th>
                 </tr>
             </thead>
             <tbody>
                 <% elections.forEach(election => { %>
-                    <tr>
+                    <tr data-election-id="<%= election.election_id %>">
                         <td><%= election.election_name %></td>
                         <td><%= election.election_roles %></td>
                         <td><%= election.status %></td>
                         <td>
-                            <% if (election.status === 'registration' && !election.already_contested) { %>
+                            <% if (election.status === 'registration' && election.already_contested === 0) { %>
                                 <button class="btn contest-btn" onclick="openContestModal('<%= election.election_id %>', '<%= election.election_name %>')">Contest</button>
                             <% } else if (election.status === 'active') { %>
-                                <button class="btn vote-btn" onclick="vote('<%= election.election_id %>')">Vote</button>
+                                <button class="btn vote-btn" onclick="openVoteModal('<%= election.election_id %>', '<%= election.election_name %>')">Vote</button>
                             <% } else { %>
-                                <button class="btn" disabled>Completed</button>
+                                <button class="btn" disabled>Closed</button>
+                            <% } %>
+                        </td>
+                        <td class="winner-column">
+                            <% if (election.status === 'completed') { %>
+                                <% if (election.winner_regno) { %>
+                                    <%= election.winner_name %> (<%= election.winner_regno %>) - <%= election.winner_votes || 0 %> votes
+                                <% } else { %>
+                                    No winner declared
+                                <% } %>
+                            <% } else { %>
+                                Ongoing
                             <% } %>
                         </td>
                     </tr>
@@ -116,25 +163,43 @@
         </table>
     </div>
 
+
     <!-- Contest Modal -->
     <div id="contestModal" class="modal">
         <div class="modal-content">
             <h3>Contest Election</h3>
             <p id="electionName"></p>
             <label for="whyParticipate">Why do you want to participate?</label>
-            <textarea id="whyParticipate" name="whyParticipate" rows="4" required></textarea>
+            <textarea id="whyParticipate" rows="4" required></textarea>
             <br><br>
             <button class="btn contest-btn" onclick="submitContest()">Submit</button>
-            <button class="close-btn" onclick="closeContestModal()">Close</button>
+            <button class="btn" onclick="closeContestModal()">Close</button>
         </div>
     </div>
+    <!-- Vote Modal -->
+<div id="voteModal" class="modal">
+    <div class="modal-content">
+        <h3>Vote for Candidate</h3>
+        <p id="voteElectionName"></p>
+        <form id="voteForm">
+            <label>Select a Candidate:</label>
+            <select id="contestantSelect" required></select>
+            <br><br>
+            <button type="submit" class="btn contest-btn">Submit Vote</button>
+            <button type="button" class="btn" onclick="closeVoteModal()">Cancel</button>
+        </form>
+    </div>
+</div>
+
 
     <script>
-        let selectedElectionId = null; // Store the election ID globally
+        let selectedElectionId = null;
+
+        
 
         function openContestModal(electionId, electionName) {
-            selectedElectionId = electionId; // Store electionId globally
-            document.getElementById("electionName").innerText = "Election: " + electionName; // Show election name
+            selectedElectionId = electionId;
+            document.getElementById("electionName").innerText = "Election: " + electionName;
             document.getElementById("contestModal").style.display = "flex";
         }
 
@@ -144,23 +209,119 @@
 
         function submitContest() {
             let whyParticipate = document.getElementById("whyParticipate").value;
-            if (!whyParticipate) return alert("Please enter a reason before submitting.");
-            
-            console.log("Submitting Contest for Election ID:", selectedElectionId); // Debugging log
+            if (!whyParticipate) {
+                alert("Please enter a reason before submitting.");
+                return;
+            }
 
-            fetch("/contest", {
+            fetch("/student/contest", {  
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ electionId: selectedElectionId, whyParticipate }) // Send electionId
+                body: JSON.stringify({ electionId: selectedElectionId, whyParticipate })
             })
             .then(response => response.json())
             .then(data => {
                 alert(data.message);
                 closeContestModal();
+                document.getElementById("whyParticipate").value = "";
                 window.location.reload();
             })
-            .catch(() => alert("Failed to contest. Please try again."));
+            .catch(() => {
+                alert("Failed to contest. Try again.");
+            });
         }
+
+        window.onclick = function(event) {
+            if (event.target === document.getElementById("contestModal")) {
+                closeContestModal();
+            }
+        };
+        
+
+    function openVoteModal(electionId, electionName) {
+        selectedElectionId = electionId;
+        document.getElementById("voteElectionName").innerText = "Election: " + electionName;
+
+        // Fetch contestants for the selected election
+        fetch(`/student/election/${electionId}/contestants`)
+            .then(response => response.json())
+            .then(data => {
+                let selectBox = document.getElementById("contestantSelect");
+                selectBox.innerHTML = ""; // Clear previous options
+
+                if (data.contestants.length === 0) {
+                    selectBox.innerHTML = "<option>No candidates available</option>";
+                } else {
+                    data.contestants.forEach(contestant => {
+                        let option = document.createElement("option");
+                        option.value = contestant.regno;
+                        option.text = contestant.name + " (" + contestant.regno + ")";
+                        selectBox.appendChild(option);
+                    });
+                }
+
+                document.getElementById("voteModal").style.display = "flex";
+            })
+            .catch(() => alert("Failed to load contestants."));
+    }
+
+    function closeVoteModal() {
+        document.getElementById("voteModal").style.display = "none";
+    }
+
+    document.getElementById("voteForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+        let contestantId = document.getElementById("contestantSelect").value;
+
+        fetch("/student/vote", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ electionId: selectedElectionId, contestantId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            closeVoteModal();
+            window.location.reload();
+        })
+        .catch(() => alert("Failed to submit vote."));
+    });
+
+    // Close modal when clicking outside
+    window.onclick = function (event) {
+        if (event.target === document.getElementById("voteModal")) {
+            closeVoteModal();
+        }
+    };
+
+    document.addEventListener("DOMContentLoaded", function () {
+    fetch("/student/elections")
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(election => {
+                let row = document.querySelector(`tr[data-election-id='${election.election_id}']`);
+                if (row) {
+                    let winnerCell = row.querySelector(".winner-column");
+                    if (election.status === "completed" && election.winner_name) {
+                        winnerCell.innerText = `${election.winner_name} (${election.winner_regno})`;
+                    } else {
+                        winnerCell.innerText = "No winner";
+                    }
+                }
+            });
+        })
+        .catch(error => console.error("Error fetching elections:", error));
+});
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll("tr").forEach(row => {
+            let status = row.querySelector("td:nth-child(3)")?.innerText.trim();
+            let winnerCell = row.querySelector(".winner-column");
+            if (status === "completed" && winnerCell && winnerCell.innerText.trim() !== "No winner declared") {
+                row.classList.add("winner-row");
+            }
+        });
+    });
+
     </script>
 </body>
 </html>

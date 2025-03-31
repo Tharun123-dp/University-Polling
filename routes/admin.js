@@ -180,8 +180,141 @@ router.get("/admin/branches/:degreeId", async (req, res) => {
     }
 });
 
+router.get("/elections", (req, res) => {
+    const query = `
+        SELECT e.election_id, e.election_name, 
+               (SELECT COUNT(*) FROM voted_students_info v WHERE v.election_id = e.election_id) AS total_voted,
+               (SELECT COUNT(*) FROM contestant_election_info c WHERE c.election_id = e.election_id) AS total_contestants,
+               (SELECT CONCAT(s.fname, ' ', s.lname) FROM election_results r 
+                JOIN student_info s ON r.regno = s.regno 
+                WHERE r.election_id = e.election_id LIMIT 1) AS winner
+        FROM election_info e;
+    `;
+
+    con.query(query, (err, results) => {
+        if (err) throw err;
+        res.render("admin/elections", { elections: results });
+    });
+});
+
+
+// Get voted students for an election (JSON response for modal)
+router.get("/elections/:id/voted", (req, res) => {
+    const electionId = req.params.id;
+
+    const query = `
+        SELECT 
+            v.regno AS student_regno, 
+            CONCAT(s.fname, ' ', s.lname) AS student_name, 
+            s.year, 
+            d.degree_name, 
+            b.branch_name, 
+            CONCAT(c.fname, ' ', c.lname) AS candidate_name
+        FROM voted_students_info v
+        JOIN student_info s ON v.regno = s.regno
+        JOIN degree_info d ON s.degree_id = d.degree_id
+        JOIN branch_info b ON s.branch_id = b.branch_id
+        JOIN student_info c ON v.contestant_id = c.regno  
+        WHERE v.election_id = ?;
+    `;
+
+    con.query(query, [electionId], (err, results) => {
+        if (err) {
+            console.error("Error fetching voted students:", err);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+
+        res.json({ students: results });
+    });
+});
+
+// Get contestants for an election (JSON response for modal)
+router.get("/elections/:id/contestants", (req, res) => {
+    const electionId = req.params.id;
+    const query = `
+        SELECT 
+            CONCAT(s.fname, ' ', s.lname) AS name, 
+            s.regno, 
+            s.year, 
+            d.degree_name, 
+            b.branch_name, 
+            c.no_of_votes 
+        FROM contestant_election_info c
+        JOIN student_info s ON c.contestant_regno = s.regno
+        JOIN degree_info d ON s.degree_id = d.degree_id
+        JOIN branch_info b ON s.branch_id = b.branch_id
+        WHERE c.election_id = ?;
+    `;
+
+    con.query(query, [electionId], (err, results) => {
+        if (err) throw err;
+        res.json({ contestants: results });
+    });
+});
+
+// Delete election route
+router.post("/elections/delete/:id", (req, res) => {
+    const electionId = req.params.id;
+
+    // First, delete associated records (like contestants and votes) if needed
+    const deleteVotes = "DELETE FROM voted_students_info WHERE election_id = ?";
+    const deleteContestants = "DELETE FROM contestant_election_info WHERE election_id = ?";
+    const deleteElection = "DELETE FROM election_info WHERE election_id = ?";
+
+    con.query(deleteVotes, [electionId], (err) => {
+        if (err) {
+            console.error("Error deleting votes:", err);
+            return res.status(500).send("Error deleting votes.");
+        }
+
+        con.query(deleteContestants, [electionId], (err) => {
+            if (err) {
+                console.error("Error deleting contestants:", err);
+                return res.status(500).send("Error deleting contestants.");
+            }
+
+            con.query(deleteElection, [electionId], (err) => {
+                if (err) {
+                    console.error("Error deleting election:", err);
+                    return res.status(500).send("Error deleting election.");
+                }
+                res.sendStatus(200);
+            });
+        });
+    });
+});
+
+router.get("/students", (req, res) => {
+    const query = `
+        SELECT s.regno, COALESCE(CONCAT(s.fname, ' ', s.lname), 'Unknown') AS name, 
+       d.degree_name, b.branch_name, s.year
+FROM student_info s
+JOIN degree_info d ON s.degree_id = d.degree_id
+JOIN branch_info b ON s.branch_id = b.branch_id;
+
+    `;
+
+    con.query(query, (err, results) => {
+        if (err) return res.status(500).send(err);
+        res.render("admin/students", { students: results });
+    });
+});
+
+// Delete student
+router.post("/students/delete/:id", (req, res) => {
+    const regno = req.params.id;
+    con.query("DELETE FROM student_info WHERE regno = ?", [regno], (err, result) => {
+        if (err) return res.status(500).send(err);
+        res.redirect("/admin/students");
+    });
+});
+
+
+
 
 // ✅ Fix Logout Route
 router.get("/logout", logout);
 
 module.exports = router;
+
+

@@ -1,98 +1,233 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Elections</title>
+    <title>Elections List</title>
+    <link rel="stylesheet" href="/css/admin.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
         }
-        .container {
-            width: 90%;
-            margin: auto;
-            padding: 20px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-        }
-        h1 {
+        
+        /* Center Title */
+        h2 {
             text-align: center;
+            margin-top: 20px;
             color: #333;
         }
+        
+        /* Table Styling */
         table {
             width: 100%;
-            border-collapse: collapse;
             margin-top: 20px;
+            border-collapse: collapse;
         }
-        th, td {
-            padding: 10px;
+
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
             text-align: center;
-            border-bottom: 1px solid #ddd;
         }
+
         th {
-            background-color: #343a40;
+            background-color: #007BFF;
             color: white;
         }
-        .edit-btn, .delete-btn {
-            padding: 5px 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .edit-btn {
-            background-color: #ffc107;
-            color: black;
-        }
+        
+        /* Delete Button Styling */
         .delete-btn {
             background-color: #dc3545;
             color: white;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
         }
-        .edit-btn:hover {
-            background-color: #e0a800;
-        }
+
         .delete-btn:hover {
             background-color: #c82333;
+        }
+
+        /* Center Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 60%;
+            max-width: 600px;
+            text-align: center;
+            color: black;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 22px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-
-    <%- include('partials/header') %>
+    <%- include('../partials/header') %>
 
     <div class="container">
-        <h1>Election Management</h1>
+        <h2>Elections List</h2>
         <table>
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Election Name</th>
-                    <th>Date</th>
+                    <th>Voted Students</th>
+                    <th>Contestants Info</th>
+                    <th>Winner</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <% elections.forEach(election => { %>
-                    <tr>
-                        <td><%= election.id %></td>
-                        <td><%= election.name %></td>
-                        <td><%= election.date %></td>
-                        <td>
-                            <a href="/admin/editElection/<%= election.id %>" class="edit-btn">Edit</a>
-                            <a href="/admin/deleteElection/<%= election.id %>" class="delete-btn" onclick="return confirm('Are you sure?')">Delete</a>
-                        </td>
-                    </tr>
-                <% }); %>
+                <tr>
+                    <td><%= election.election_name %></td>
+                    <td><a href="#" class="view-voted" data-id="<%= election.election_id %>">View Voted Students</a></td>
+                    <td><a href="#" class="view-contestants" data-id="<%= election.election_id %>">View Contestants</a></td>
+                    <td><%= election.winner || "Not Declared" %></td>
+                    <td>
+                        <button class="delete-btn" data-id="<%= election.election_id %>">Delete</button>
+                    </td>
+                </tr>
+                <% }) %>
             </tbody>
         </table>
     </div>
 
-    <%- include('partials/footer') %>
+    <!-- Modal for Voted Students -->
+    <div id="votedModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Voted Students</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>USN</th>
+                        <th>Year</th>
+                        <th>Degree</th>
+                        <th>Branch</th>
+                        <th>Voted Candidate</th>
+                    </tr>
+                </thead>
+                <tbody id="votedStudentsList">
+                    <!-- Data will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
 
+    <!-- Modal for Contestants -->
+    <div id="contestantModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Contestants Info</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>USN</th>
+                        <th>Year</th>
+                        <th>Degree</th>
+                        <th>Branch</th>
+                        <th>No of Votes</th>
+                    </tr>
+                </thead>
+                <tbody id="contestantList"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $(".modal").hide(); // Ensure modals are hidden on page load
+
+            $(".view-voted").click(function (event) {
+                event.preventDefault();
+                let electionId = $(this).data("id");
+
+                $.get(`/admin/elections/${electionId}/voted`, function (data) {
+                    if (data.students.length === 0) {
+                        $("#votedStudentsList").html("<tr><td colspan='6'>No students have voted yet.</td></tr>");
+                    } else {
+                        let html = "";
+                        data.students.forEach(student => {
+                            html += `<tr>
+                                        <td>${student.student_name}</td>
+                                        <td>${student.student_regno}</td>
+                                        <td>${student.year}</td>
+                                        <td>${student.degree_name}</td>
+                                        <td>${student.branch_name}</td>
+                                        <td>${student.candidate_name}</td>
+                                    </tr>`;
+                        });
+                        $("#votedStudentsList").html(html);
+                    }
+                    $("#votedModal").fadeIn();
+                }).fail(function (err) {
+                    alert("Error fetching voted students: " + err.responseText);
+                });
+            });
+
+            $(".view-contestants").click(function (event) {
+                event.preventDefault();
+                let electionId = $(this).data("id");
+
+                $.get(`/admin/elections/${electionId}/contestants`, function (data) {
+                    let html = "";
+                    data.contestants.forEach(contestant => {
+                        html += `<tr>
+                                    <td>${contestant.name}</td>
+                                    <td>${contestant.regno}</td>
+                                    <td>${contestant.year}</td>
+                                    <td>${contestant.degree_name}</td>
+                                    <td>${contestant.branch_name}</td>
+                                    <td>${contestant.no_of_votes}</td>
+                                </tr>`;
+                    });
+                    $("#contestantList").html(html);
+                    $("#contestantModal").fadeIn();
+                });
+            });
+
+            $(".close").click(function () {
+                $(".modal").fadeOut();
+            });
+            $(".delete-btn").click(function () {
+                let electionId = $(this).data("id");
+                if (confirm("Are you sure you want to delete this election?")) {
+                    $.post(`/admin/elections/delete/${electionId}`, function (data) {
+                        alert("Election deleted successfully.");
+                        location.reload();
+                    }).fail(function (err) {
+                        alert("Error deleting election: " + err.responseText);
+                    });
+                }
+            });
+        });
+    </script>
+
+    <%- include('../partials/footer') %>
 </body>
 </html>

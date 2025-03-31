@@ -7,7 +7,7 @@ const flash = require("express-flash");
 const cookieParser = require("cookie-parser");
 const adminRouter = require("./routes/admin");
 const userRouter = require("./routes/student");
-const con = require("./connection");
+const con = require("./connection"); // ✅ Use connection from connection.js
 
 // Load environment variables
 dotenv.config({ path: "./.env" });
@@ -30,7 +30,6 @@ app.use((req, res, next) => {
     res.locals.success = req.flash("success") || [];
     next();
 });
-
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -60,6 +59,8 @@ const updateElectionStatus = () => {
         UPDATE election_info 
         SET status = 
             CASE 
+                WHEN NOW() >= start_registration_date 
+                     AND NOW() <= TIMESTAMP(end_registration_date, '23:59:59') THEN 'registration'
                 WHEN NOW() >= CONCAT(election_date, ' ', election_start_time) 
                      AND NOW() <= CONCAT(election_date, ' ', election_end_time) THEN 'active'
                 WHEN NOW() > CONCAT(election_date, ' ', election_end_time) THEN 'completed'
@@ -71,14 +72,15 @@ const updateElectionStatus = () => {
         if (err) {
             console.error("❌ Error updating election statuses:", err);
         } else {
-            console.log(`✅ Election statuses updated. ${result.affectedRows} rows affected.`);
+            // console.log(`✅ Election statuses updated. ${result.affectedRows} rows affected.`);
         }
     });
 };
 
-
-// Run this function every **60 seconds** to update election statuses
+// Run every 60 seconds
 setInterval(updateElectionStatus, 60000);
+
+
 
 // Start server
 app.listen(7000, () => {
